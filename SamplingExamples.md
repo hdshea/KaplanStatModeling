@@ -3,7 +3,9 @@ Statistical Modeling: Sampling Distribution & Model Coefficients
 H. David Shea
 3 March 2021
 
-Examples below use the mosaic TenMileRace data set. These data are
+### Data
+
+Examples below use the mosaic TenMileRace dataset. These data are
 running times for 8636 registered participants in the Cherry Blossom Ten
 Mile Race held in Washington, D.C. in April 2005. Skimmed output
 follows:
@@ -42,7 +44,7 @@ and Males
 
 <img src="SamplingExamples_files/figure-gfm/r population_density-1.png" width="70%" style="display: block; margin: auto;" />
 
-### net \~ age + sex
+### Model: net \~ age + sex
 
 Now fitting this linear model for the entire population and random
 samples of n = 100 from the entire population.
@@ -50,8 +52,8 @@ samples of n = 100 from the entire population.
 Model coefficients from entire population
 
 ``` r
-tmr_model1 <- lm(net ~ age + sex, data = TenMileRace)
-format(coef(tmr_model1), digits = 2, nsmall = 1)
+tmr_pop <- lm(net ~ age + sex, data = TenMileRace)
+format(coef(tmr_pop), digits = 2, nsmall = 1)
 #> (Intercept)         age        sexM 
 #>    "5339.2"    "  16.9"    "-726.6"
 ```
@@ -66,17 +68,20 @@ for(x in 1:10) {
         )
     cat("\n")
 }
-#> 1 5411.7   15.9 -620.8
-#> 2 5702.3    2.4 -549.6
-#> 3 5643.1    8.4 -697.0
-#> 4 5290.2   19.8 -832.1
-#> 5 5430.6   16.9 -563.8
-#> 6 4759.3   35.3 -919.4
-#> 7 5660.3    7.9 -686.1
-#> 8 4960.3   24.7 -824.8
-#> 9 5399.9   10.8 -533.8
-#> 10 5402.7   12.6 -629.4
+#> 1 5577.4    7.5 -456.2
+#> 2 5525.6   11.2 -765.3
+#> 3 5527.7   10.4 -571.5
+#> 4 5973.8    3.6 -669.8
+#> 5 5980.0    4.9 -538.6
+#> 6 5183.8   25.2 -802.1
+#> 7 5417.1   15.4 -726.9
+#> 8 5464.9   11.6 -705.2
+#> 9  5215.4    29.6 -1087.7
+#> 10 5652.4    4.8 -714.8
+rm(x)
 ```
+
+### Sampling
 
 Density plots for sampling distributions of the model coefficients of
 1000 random samples of n = 100 observations
@@ -92,18 +97,18 @@ regression report function `summary.lm()`
 
     #> Coefficients:
     #>                Estimate Std. Error    t value     Pr(>|t|)
-    #> (Intercept) 5838.308881 326.956704 17.8565199 2.011476e-32
-    #> age           -1.120241   8.989144 -0.1246215 9.010811e-01
-    #> sexM        -451.094578 180.442459 -2.4999359 1.409967e-02
+    #> (Intercept) 5419.388643 298.182102 18.1747617 5.356313e-33
+    #> age            8.540484   8.741814  0.9769693 3.310146e-01
+    #> sexM        -280.544773 171.998924 -1.6310845 1.061153e-01
     #> 
     #> Coefficients:
     #>               Estimate Std. Error   t value     Pr(>|t|)
-    #> (Intercept) 5666.85433 343.215160 16.511084 6.230320e-30
-    #> age           10.16118   9.098073  1.116849 2.668177e-01
-    #> sexM        -593.33891 191.198123 -3.103267 2.507871e-03
+    #> (Intercept) 4839.33184  382.58704 12.648970 3.052723e-22
+    #> age           33.69693   10.69243  3.151476 2.161154e-03
+    #> sexM        -718.04456  225.32862 -3.186655 1.936897e-03
     #> 
     #> Coefficients:
     #>               Estimate Std. Error   t value     Pr(>|t|)
-    #> (Intercept) 5208.24699 366.031400 14.228962 1.762445e-25
-    #> age           22.09115   9.363239  2.359350 2.031096e-02
-    #> sexM        -883.41790 190.842481 -4.629042 1.139051e-05
+    #> (Intercept) 5024.66680 316.265479 15.887497 9.613690e-29
+    #> age           25.44376   9.215788  2.760888 6.894168e-03
+    #> sexM        -966.80253 192.291545 -5.027795 2.270746e-06

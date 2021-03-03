@@ -24,8 +24,9 @@ knitr::opts_chunk$set(
 )
 #+
 
-
-#' Examples below use the mosaic TenMileRace data set.
+#' ### Data
+#'
+#' Examples below use the mosaic TenMileRace dataset.
 #' These data are running times for 8636 registered participants in the Cherry Blossom Ten Mile Race held in Washington, D.C. in April 2005.
 #' Skimmed output follows:
 #+ r data_set, warning = FALSE, echo = FALSE
@@ -46,14 +47,14 @@ gf_point(net ~ age | sex, data = TenMileRace, color = ~sex, alpha = 0.2) %>%
         )
 #+
 
-#' ### net ~ age + sex
+#' ### Model:  net ~ age + sex
 #'
 #' Now fitting this linear model for the entire population and random samples of n = 100 from the entire population.
 #'
 #' Model coefficients from entire population
 #+ r population_coefficients
-tmr_model1 <- lm(net ~ age + sex, data = TenMileRace)
-format(coef(tmr_model1), digits = 2, nsmall = 1)
+tmr_pop <- lm(net ~ age + sex, data = TenMileRace)
+format(coef(tmr_pop), digits = 2, nsmall = 1)
 #+
 
 #' Model coefficients from 10 random samples of n = 100 observations
@@ -65,28 +66,32 @@ for(x in 1:10) {
         )
     cat("\n")
 }
+rm(x)
 #+
 
+#' ### Sampling
+#'
 #' Density plots for sampling distributions of the model coefficients of 1000 random samples of n = 100 observations
 #+ r random_set, echo = FALSE
-tmr_set <- tibble(data.frame(matrix(ncol = 4, nrow = 1000, dimnames = list(NULL, c("Intercept", "age", "sexM", "model")))))
+tmr_sample <- tibble(data.frame(matrix(ncol = 4, nrow = 1000, dimnames = list(NULL, c("Intercept", "age", "sexM", "model")))))
 for(x in 1:1000) {
     mdl <- lm(net ~ age + sex, data = slice_sample(TenMileRace, n = 100))
-    tmr_set$Intercept[x] <- coef(mdl)[1]
-    tmr_set$age[x] <- coef(mdl)[2]
-    tmr_set$sexM[x] <- coef(mdl)[3]
-    tmr_set$model[x] <- list(mdl)
+    tmr_sample$Intercept[x] <- coef(mdl)[1]
+    tmr_sample$age[x] <- coef(mdl)[2]
+    tmr_sample$sexM[x] <- coef(mdl)[3]
+    tmr_sample$model[x] <- list(mdl)
 }
+rm(x,mdl)
 #+
 
 #+ r intercept_plot, echo = FALSE
-tmr_set %>%
+tmr_sample %>%
     ggplot(aes(Intercept)) +
     geom_density() +
-    geom_vline(xintercept = coef(tmr_model1)[1]) +
+    geom_vline(xintercept = coef(tmr_pop)[1]) +
     labs(
         title = "Intercept Sampling Distribution",
-        subtitle = str_c("Standard Error = ", format(sd(tmr_set$Intercept), digits = 2, nsmall = 1)),
+        subtitle = str_c("Standard Error = ", format(sd(tmr_sample$Intercept), digits = 2, nsmall = 1)),
         x = "Intercept",
         y = "Density",
         caption = "Vertical line is value for entire population"
@@ -94,13 +99,13 @@ tmr_set %>%
 #+
 
 #+ r age_coefficient_plot, echo = FALSE
-tmr_set %>%
+tmr_sample %>%
     ggplot(aes(age)) +
     geom_density() +
-    geom_vline(xintercept = coef(tmr_model1)[2]) +
+    geom_vline(xintercept = coef(tmr_pop)[2]) +
     labs(
         title = "Age Coefficient Sampling Distribution",
-        subtitle = str_c("Standard Error = ", format(sd(tmr_set$age), digits = 2, nsmall = 1)),
+        subtitle = str_c("Standard Error = ", format(sd(tmr_sample$age), digits = 2, nsmall = 1)),
         x = "Age Coefficient",
         y = "Density",
         caption = "Vertical line is value for entire population"
@@ -108,13 +113,13 @@ tmr_set %>%
 #+
 
 #+ r sexM_coefficient_plot, echo = FALSE
-tmr_set %>%
+tmr_sample %>%
     ggplot(aes(sexM)) +
     geom_density() +
-    geom_vline(xintercept = coef(tmr_model1)[3]) +
+    geom_vline(xintercept = coef(tmr_pop)[3]) +
     labs(
         title = "Sex(Male) Coefficient Sampling Distribution",
-        subtitle = str_c("Standard Error = ", format(sd(tmr_set$sexM), digits = 2, nsmall = 1)),
+        subtitle = str_c("Standard Error = ", format(sd(tmr_sample$sexM), digits = 2, nsmall = 1)),
         x = "Sex(Male) Coefficient",
         y = "Density",
         caption = "Vertical line is value for entire population"
@@ -124,9 +129,9 @@ tmr_set %>%
 #' Standard Error estimates for three random samples of n = 100 from the r regression report function `summary.lm()`
 #+ r reg_rpt_std_err_estimates, echo = FALSE
 cat("Coefficients:\n")
-summary.lm(slice_sample(tmr_set, n = 1)$model[[1]])$coefficients
+summary.lm(slice_sample(tmr_sample, n = 1)$model[[1]])$coefficients
 cat("\nCoefficients:\n")
-summary.lm(slice_sample(tmr_set, n = 1)$model[[1]])$coefficients
+summary.lm(slice_sample(tmr_sample, n = 1)$model[[1]])$coefficients
 cat("\nCoefficients:\n")
-summary.lm(slice_sample(tmr_set, n = 1)$model[[1]])$coefficients
+summary.lm(slice_sample(tmr_sample, n = 1)$model[[1]])$coefficients
 #+
