@@ -24,6 +24,7 @@ knitr::opts_chunk$set(
 )
 #+
 
+
 #' Examples below use the mosaic TenMileRace data set.
 #' These data are running times for 8636 registered participants in the Cherry Blossom Ten Mile Race held in Washington, D.C. in April 2005.
 #' Skimmed output follows:
